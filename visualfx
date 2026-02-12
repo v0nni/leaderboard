@@ -1,0 +1,21 @@
+<apex:page controller="LeaderboardController">
+    <apex:pageBlock title="Sales Leaderboard">
+        <apex:pageBlockTable value="{!leaderboard}" var="entry">
+            
+            <apex:column headerValue="Rank">
+                {!entry.rank}
+            </apex:column>
+            
+            <apex:column headerValue="Rep Name">
+                {!entry.userName}
+            </apex:column>
+            
+            <apex:column headerValue="Total Revenue">
+                <apex:outputText value="{0, number, currency}">
+                    <apex:param value="{!entry.totalAmount}" />
+                </apex:outputText>
+            </apex:column>
+
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>
