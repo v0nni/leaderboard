@@ -1,0 +1,43 @@
+public with sharing class LeaderboardController {
+
+    public class LeaderboardEntry {
+        public Integer rank {get; set;}
+        public String userName {get; set;}
+        public Decimal totalAmount {get; set;}
+
+        public LeaderboardEntry(Integer r, String name, Decimal amt) {
+            rank = r;
+            userName = name;
+            totalAmount = amt;
+        }
+    }
+
+    public List<LeaderboardEntry> leaderboard {get; set;}
+
+    public LeaderboardController() {
+
+        leaderboard = new List<LeaderboardEntry>();
+
+        AggregateResult[] results = [
+            SELECT Owner.Name ownerName, SUM(Amount) total
+            FROM Opportunity
+            WHERE StageName = 'Closed Won'
+            GROUP BY Owner.Name
+            ORDER BY SUM(Amount) DESC
+            LIMIT 10
+        ];
+
+        Integer rankCounter = 1;
+
+        for (AggregateResult ar : results) {
+            leaderboard.add(
+                new LeaderboardEntry(
+                    rankCounter,
+                    (String)ar.get('ownerName'),
+                    (Decimal)ar.get('total')
+                )
+            );
+            rankCounter++;
+        }
+    }
+}
